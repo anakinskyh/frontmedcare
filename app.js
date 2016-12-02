@@ -17,3 +17,5 @@ io.sockets.on('connection', function(socket) {
         io.sockets.emit('new message', data);
     });
 });
+
+console.log('helo');
