@@ -18,4 +18,4 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-console.log('helo');
+console.log('hello');
