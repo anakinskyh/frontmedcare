@@ -1,0 +1,204 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+</script>
+<style type"text/css">
+.top-buffer { margin-top:20px; }
+</style>
+</head>
+<body>
+  <div class="header"></div>
+  <script>
+      $(".header").load("/assets/html/header.html");
+  </script>
+  <div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top navigatebar" role="navigation"></nav>
+    <script>
+      $(".navigatebar").load("/assets/html/staffnav.html", function(){
+        $("#viewappt").addClass("active");
+      });
+    </script>
+
+    <!-- page content -->
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        รายการนัดหมาย
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="form-group">
+                            <label>แผนกและแพทย์ที่ต้องการค้นหา</label>
+                            <select class="form-control"id="dept" onchange="getDocName()">
+                                <option class="disabled"> --รายชื่อแผนก--</option>
+                                <option value="อายุรกรรม"> อายุรกรรม</option>
+                                <option value="ศัลยกรรม"> ศัลยกรรม</option>
+                                <option value="สูติ"> สูติ</option>
+                                <option value="จักษุ"> จักษุ</option>
+                                <option value="โรคผิวหนัง"> โรคผิวหนัง</option>
+                                <option value="อวัยวะปัสสาวะ"> อวัยวะปัสสาวะ</option>
+                                <option value="หัวใจ"> หัวใจ</option>
+                                <option value="หู คอ จมูก"> หู คอ จมูก</option>
+                                <option value="รังสี"> รังสี</option>
+                                <option value="รักษาโรคในช่องปากและฟัน"> รักษาโรคในช่องปากและฟัน</option>
+                            </select>
+
+                        </li>
+                        <li class="form-group" ng-model="name">
+                            <select class="form-control" id="dname">
+                            </select>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li class="form-group">
+                            <label>เลือกเวลาและวันที่ที่ต้องการค้นหา</label>
+                            <input type="date" class="form-control" id="cdate" >
+                        </li>
+                        <li class="form-group">
+                            <select class="form-control" id="time">
+                                <option>เช้า</option>
+                                <option>บ่าย</option>
+                            </select>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <button class="btn btn-primary" type="button" onclick="getChosenTime()"> ค้นหา</button>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>วันที่</th>
+                                    <th>เวลา</th>
+                                    <th>ชื่อผู้ป่วย</th>
+                                    <th>ชื่อแพทย์</th>
+                                    <th>รายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apmlist">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <form action="/staff/makeappt">
+                <button class="btn btn-primary" type="submit"> + เพิ่มรายการนัดหมาย</button>
+            </form>
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- /#page-wrapper -->
+  </div>
+</body>
+<script type="text/javascript">
+    function getDocName() {
+        var sendData = document.getElementById("dept").value;
+        var markers = {'deptname': sendData};
+        var list;
+        $.ajax({
+            type: "POST",
+            url: "http://139.59.234.220:5050/api/v1/getdoctorname",
+            data: JSON.stringify(markers ),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){//alert(data);
+                var namelist = document.getElementById("dname");
+                namelist.length=0;
+                for (i=0;i<data.length;i++){
+                    var option = document.createElement("option");
+                    option.text = data[i].firstname + " " + data[i].lastname;
+                    option.value = data[i].id;
+                    namelist.appendChild(option);
+                }
+
+            },
+            failure: function(errMsg) {
+                alert(errMsg);
+            }
+        });
+
+
+    }
+
+
+</script>
+
+<script type="text/javascript">
+    function getChosenTime() {
+        var sdname = document.getElementById("dname");
+        var did = sdname.options[sdname.selectedIndex].value;
+        var date = document.getElementById("cdate").value;
+        var st,e;
+        //sessionStorage.firstname||lastname||id||role ไว้ใช้เรียกค่าที่าเก็บไว้ตอนlogin
+        if(document.getElementById("time").value=='เช้า'){
+            st = date+" 09:00:00";
+            e = date+" 11:30:00";
+        }else{
+            st = date+" 13:00:00";
+            e = date+" 15:30:00";
+        }
+
+        var markers = {'doctor_id': did,'start':st,'end':e};
+        $.ajax({
+            type: "POST",
+            url: "http://139.59.234.220:5050/api/v1/getdoctorattplist",
+            data: JSON.stringify(markers ),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            timeout: 2000,
+            success: function(data){//alert(data);
+                var list = document.getElementById("apmlist");
+                while (list.rows.length>0) list.deleteRow(0);
+                for (i=0;i<data.length;i++) {
+                    var row = list.insertRow(list.rows.length);
+
+                    var datecell = row.insertCell(0);
+                    var timecell = row.insertCell(1);
+                    var pnamecell = row.insertCell(2);
+                    var dnamecell = row.insertCell(3)
+                    var detailcell = row.insertCell(4);
+
+                    var datetext = document.createTextNode(date);
+                    var timetext = document.createTextNode(document.getElementById("time").value);
+                    var pnametext = document.createTextNode(data[i].firstname+" "+data[i].lastname);
+                    var dnametext = document.createTextNode(sdname.options[sdname.selectedIndex].text);
+                    var detailtext = document.createTextNode(data[i].syntom);
+
+                    datecell.appendChild(datetext);
+                    timecell.appendChild(timetext);
+                    pnamecell.appendChild(pnametext);
+                    dnamecell.appendChild(dnametext);
+                    detailcell.appendChild(detailtext);
+                }
+            },
+            failure: function(errMsg) {
+                alert(errMsg);
+            }
+        });
+    }
+</script>
+</html>
