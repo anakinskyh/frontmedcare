@@ -37,11 +37,31 @@ app.get('/patient/personalinfo', function(req, res) {
     res.sendfile(__dirname + '/public/patient/personalinfo.html');
 });
 
-
 app.get('/patient/dispensation', function(req, res) {
     res.sendfile(__dirname + '/public/patient/dispensation.html');
 });
 
+//doctor
+app.get('/doctor/makeappt', function(req, res) {
+    res.sendfile(__dirname + '/public/doctor/makeappt.html');
+});
+
+app.get('/doctor/viewappt', function(req, res) {
+    res.sendfile(__dirname + '/public/doctor/viewappt.html');
+});
+
+app.get('/doctor/roundtimetable', function(req, res) {
+    res.sendfile(__dirname + '/public/doctor/roundtimetable.html');
+});
+
+app.get('/doctor/healthrecord', function(req, res) {
+    res.sendfile(__dirname + '/public/doctor/healthrecord.html');
+});
+
+//doctor
+app.get('/pharmacist/viewdispensation', function(req, res) {
+    res.sendfile(__dirname + '/public/pharmacist/viewdispensation.html');
+});
 
 
 

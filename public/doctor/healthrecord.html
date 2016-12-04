@@ -1,0 +1,32 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+</script>
+</head>
+<body>
+  <div class="header"></div>
+  <script>
+      $(".header").load("/assets/html/header.html");
+  </script>
+  <div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top navigatebar" role="navigation"></nav>
+    <script>
+        $(".navigatebar").load("/assets/html/doctornav.html", function(){
+          $("#healthrecord").addClass("active");
+        });
+    </script>
+
+    <!-- page content -->
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- /#page-wrapper -->
+  </div>
+</body>
