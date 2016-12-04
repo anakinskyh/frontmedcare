@@ -1,0 +1,161 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+</script>
+</head>
+<body>
+    <div class="header"></div>
+    <script>
+        $(".header").load("/assets/html/header.html");
+    </script>
+    <div id="wrapper">
+      <nav class="navbar navbar-inverse navbar-fixed-top navigatebar" role="navigation"></nav>
+      <script>
+          $(".navigatebar").load("/assets/html/adminnav.html", function(){
+            $("#viewappt").addClass("active");
+          });
+      </script>
+      <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            เพิ่มบัญชี
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- /.row -->
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <form  role="form">
+                            <ol class="breadcrumb">
+                                <div class="form-group">
+                                    <label>อีเมล</label>
+                                    <input id="email" type="email" min="6" name="email" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>รหัสผ่าน</label>
+                                    <input id="password" type="password" min="8" name="password" class="form-control"required>
+                                </div>
+                                <div class="form-group">
+                                    <label>ชื่อจริง</label>
+                                    <input id="firstname" type="text" name="firstname" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>นามสกุล</label>
+                                    <input id="lastname"type="text" name="lastname" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>เบอร์โทรศัพท์</label>
+                                    <input id="phonenumber" type="number" name="tel" size="10" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>ตำแหน่ง</label>
+                                    <select id="role" name="role" class="form-control" required>
+                                        <option value="doctor">แพทย์</option>
+                                        <option value="nurse">พยาบาล</option>
+                                        <option value="pharmacist">เภสัช</option>
+                                        <option value="staff">เจ้าหน้าที่</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>แผนก</label>
+                                    <select id='departmentSelect' name="department_id" class="form-control" required>
+                                    </select>
+                                </div>
+                            </ol>
+
+
+                            <button type="submit" onclick="signup()" class="btn btn-primary">ยืนยัน</button>
+
+                        </form>
+
+                    </div>
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+         <script type="text/javascript"> 
+        var markers = {};
+
+        $.ajax({
+            type: "POST",
+            url: "http://139.59.234.220:5050/api/v1/getdepartment",
+            // The key needs to match your method's input parameter (case-sensitive).
+            
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async:false,
+            timeout: 2000,
+            success: function(data){//alert(data);
+                //alert(data[0].name);  
+                var select = document.getElementById('departmentSelect');
+                for(i=0;i<data.length;i++){
+
+                    var opt = document.createElement('option');
+                    opt.text = data[i].name;
+                    opt.value = data[i].id;
+                    select.add(opt);
+                    //  alert();
+                }
+            },
+            failure: function(errMsg) {
+            alert(errMsg);
+    }
+});
+
+    </script>
+    <script type="text/javascript">
+        function signup(){
+            var email = document.getElementById('email').value;
+              var password = document.getElementById('password').value;
+              var firstname = document.getElementById('firstname').value;
+              var lastname = document.getElementById('lastname').value;
+              var phonenumber = document.getElementById('phonenumber').value;
+              var role = document.getElementById('role').value;
+              var department = document.getElementById('departmentSelect').value;
+              //alert(ssn);
+              markers = {"email":email,"password":password,"firstname":firstname,"lastname":lastname,"tel":phonenumber,"role":role,"department_id":department};
+                        $.ajax({
+                            type: "POST",
+                            url: "http://139.59.234.220:5050/api/v1/confirmadduser",
+                            // The key needs to match your method's input parameter (case-sensitive).
+                            data: JSON.stringify(markers),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            async:false,
+                            success: function(data){//alert(data);
+                               //  alert(data[0].name);  
+                                if(data.status!="done"){
+
+                                  alert("กรุณากรอกข้อมูลที่ถูกต้อง");
+                                  
+                                }
+                                  else {
+                                    alert("เพิ่มบุคลากรเรียบร้อยแล้ว");
+                                    
+                                  }
+                      
+                            },
+                            failure: function(errMsg) {
+                            alert(errMsg);
+                    }
+                });
+          
+
+          
+        }
+
+    </script>
+    </div>

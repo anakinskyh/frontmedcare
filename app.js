@@ -63,7 +63,10 @@ app.get('/pharmacist/viewdispensation', function(req, res) {
     res.sendfile(__dirname + '/public/pharmacist/viewdispensation.html');
 });
 
-
+//admin
+app.get('/admin/addstaff', function(req, res) {
+    res.sendfile(__dirname + '/public/admin/addstaff.html');
+});
 
 io.sockets.on('connection', function(socket) {
     socket.on('send message', function(data) {
