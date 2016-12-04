@@ -4,7 +4,7 @@ var express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server);
 
-server.listen(9010);
+server.listen(9000);
 
 app.use(express.static(__dirname + '/static'));
 
