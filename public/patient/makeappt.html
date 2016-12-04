@@ -6,17 +6,303 @@
 </script>
 </head>
 <body>
-    <div class="header"></div>
+  <div class="header"></div>
+  <script>
+      $(".header").load("/assets/html/header.html");
+  </script>
+  <div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top navigatebar" role="navigation"></nav>
     <script>
-        $(".header").load("/assets/html/header.html");
+        $(".navigatebar").load("/assets/html/patientnav.html", function(){
+          $("#makeappt").addClass("active");
+        });
     </script>
-    <div id="wrapper" ng-app="myApp">
-      <div class="navbar"></div>
-      <script>
-          $(".navbar").load("/assets/html/patientnav.html", function(){
-            $("#makeappt").addClass("active");
-          });
-      </script>
-        <h1>Make an appointment for me</h1>
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        ทำการนัดหมาย
+                    </h1>
+                    <ol class="breadcrumb">
+                        <label>อาการของผู้ป่วย</label>
+                        <input class="form-control" placeholder="กรอกอาการของผู้ป่วย" ng-model="detail" id="detail">
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li class="form-group">
+                            <label>แผนกและแพทย์ที่ต้องการพบ</label>
+                            <select class="form-control"id="dept" onchange="getDocName()">
+                                <option class="disabled"> --รายชื่อแผนก--</option>
+                                <option value="อายุรกรรม"> อายุรกรรม</option>
+                                <option value="ศัลยกรรม"> ศัลยกรรม</option>
+                                <option value="สูติ"> สูติ</option>
+                                <option value="จักษุ"> จักษุ</option>
+                                <option value="โรคผิวหนัง"> โรคผิวหนัง</option>
+                                <option value="อวัยวะปัสสาวะ"> อวัยวะปัสสาวะ</option>
+                                <option value="หัวใจ"> หัวใจ</option>
+                                <option value="หู คอ จมูก"> หู คอ จมูก</option>
+                                <option value="รังสี"> รังสี</option>
+                                <option value="รักษาโรคในช่องปากและฟัน"> รักษาโรคในช่องปากและฟัน</option>
+                            </select>
+                        </li>
+                        <li class="form-group">
+                            <select class="form-control" id="dname">
+                            </select>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li class="form-group">
+                            <label>เลือกช่วงเวลาที่ต้องการนัดพบ</label>
+                            <select class="form-control" ng-model="time" id="ctime">
+                                <option>เช้า</option>
+                                <option>บ่าย</option>
+                                <option>เช้าและบ่าย</option>
+                            </select>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" type="button" onclick="availableAppointment()">ค้นหาเวลานัดหมาย</button>
+
+            <br><br>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <!--<h2>Bordered with Striped Rows</h2>-->
+                    <li class="form-group">
+                        <label>เลือกนัดหมายที่ต้องการ</label>
+                        <select class="form-control" ng-model="time" id="availableappointment" onchange="myFunction3()">
+
+                        </select>
+                    </li>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <label>การนัดหมายที่เลือก</label>
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>วันที่</th>
+                                    <th>เวลา</th>
+                                    <th>ชื่อแพทย์</th>
+                                    <th>รายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="date"></td>
+                                    <td id="time"></td>
+                                    <td id="doctname"></td>
+                                    <td id="sdetail"></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-sm btn-primary" type="button" onclick="confirmAppointment()"> ยืนยันการทำนัดหมาย</button>
+
+        </div>
+        <!-- /.container-fluid -->
+
     </div>
+    <!-- /#page-wrapper -->
+  </div>
+
+  <script>
+      function myFunction() {
+          var x = document.getElementById("date").value;
+          document.getElementById("cdate").innerHTML = x;
+      }
+  </script>
+
+  <script>
+      function availableAppointment() {
+          var dept = document.getElementById("dept").value;
+          var cd = document.getElementById("dname");
+          var doctid = cd.options[cd.selectedIndex].getAttribute("doctor_id");
+          var today = new Date();
+          var enddate = new Date(today.getTime()+7*24*60*60*1000);
+          var month = today.getMonth()+1;
+          var st = today.getFullYear()+"-"+month+"-"+today.getDate();
+          var emonth = enddate.getMonth()+1;
+          var e = enddate.getFullYear()+"-"+emonth+"-"+enddate.getDate();
+          var t = document.getElementById("ctime").value;
+          alert(dept+" "+ doctid +" "+st+" "+e+" "+t);
+          var markers = {'department_id': dept,'doctor_id': doctid,'start':st,'end':e,'time':t};
+          $.ajax({
+              type: "POST",
+              url: "http://139.59.234.220:5050/api/v1/getavailabletime",
+              data: JSON.stringify(markers ),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              async: false,
+              timeout: 2000,
+              success: function(data){ alert(data);
+                  var availlist = document.getElementById("availableappointment");
+                  availlist.length=0;
+                  for (i=0;i<data.length;i++) {
+                      var option = document.createElement("option");
+                      option.text = data[i].date + " " + data[i].time;
+                      option.value = data[i].date + data[i].time;
+                      option.setAttribute('doctor_id',data[i].id);
+                      option.setAttribute('doctor_name',data[i].firstname+" "+data[i].lastname);
+                      option.setAttribute('date',data[i].date);
+                      option.setAttribute('time',data[i].time);
+                      availlist.appendChild(option);
+                  }
+                  document.getElementById("date").innerHTML = data[0].date;
+                  document.getElementById("time").innerHTML = data[0].time;
+                  document.getElementById("doctname").innerHTML = data[0].firstname+" "+data[0].lastname;
+                  document.getElementById("sdetail").innerHTML = document.getElementById("detail").value;
+              },
+              failure: function(errMsg) {
+                  alert(errMsg);
+              }
+          });
+      }
+  </script>
+
+  <script>
+      function myFunction2() {
+          var name = document.getElementById("doctname").innerHTML;
+          var pid = sessionStorage.id;
+          var s = document.getElementById("detail").value;
+          var date = document.getElementById("cdate").innerHTML;
+          var st,e;
+          var e = document.getElementById("dname");
+          var did = e.options[e.selectedIndex].getAttribute("doctor_id");
+
+          var markers = {'patient_id': pid,'syntom': s,'date':date,'doctor_id':did,'time':document.getElementById("time").value};
+          //alert(did);
+          $.ajax({
+              type: "POST",
+              url: "http://139.59.234.220:5050/api/v1/confirmappt",
+              data: JSON.stringify(markers ),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              async: false,
+              timeout: 2000,
+              success: function(data){
+                  if(data.status=='send mail')
+                      alert('ทำการนัดหมายเรียบร้อยแล้ว');
+                  else
+                  alert(data.status);
+
+              },
+              failure: function(errMsg) {
+                  alert(errMsg);
+              }
+          });
+      }
+  </script>
+
+  <script>
+      function myFunction3() {
+          var capm = document.getElementById("availableappointment");
+          var ccapm = capm.options[capm.selectedIndex];
+          document.getElementById("date").innerHTML = ccapm.getAttribute("date");
+          document.getElementById("time").innerHTML = ccapm.getAttribute("time");
+          document.getElementById("doctname").innerHTML = ccapm.getAttribute("doctor_name");
+          document.getElementById("sdetail").innerHTML = document.getElementById("detail").value;
+      }
+  </script>
+
+  <script>
+      function confirmAppointment() {
+          var capm = document.getElementById("availableappointment");
+          var docid = capm.options[capm.selectedIndex].getAttribute("doctor_id");
+          var pid = sessionStorage.id;
+          var symptom = document.getElementById("detail").value;
+          var choosendate = capm.options[capm.selectedIndex].value;
+          var date = choosendate.substring(0,11);
+          var  time = choosendate.substring(11,choosendate.length);
+          //sessionStorage.firstname||lastname||id||role ไว้ใช้เรียกค่าที่าเก็บไว้ตอนlogin
+
+          var markers = {'patient_id': pid,'syntom': symptom,'date':date,'time':time,'doctor_id':docid};
+          $.ajax({
+              type: "POST",
+              url: "http://139.59.234.220:5050/api/v1/confirmappt",
+              data: JSON.stringify(markers ),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              async: false,
+              timeout: 2000,
+              success: function(data){//alert(data.status);
+                  if(data.status=='send mail')
+                      alert('ทำการนัดหมายเรียบร้อยแล้ว');
+                  else
+                      alert(data.status);
+
+
+              },
+              failure: function(errMsg) {
+                  alert(errMsg);
+              }
+          });
+      }
+  </script>
+
+
+  <script type="text/javascript">
+      function getDocName() {
+          var sendData = document.getElementById("dept").value;
+          var markers = {'deptname': sendData};
+          var list;
+          $.ajax({
+              type: "POST",
+              url: "http://139.59.234.220:5050/api/v1/getdoctorname",
+              data: JSON.stringify(markers ),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              async: false,
+              timeout: 2000,
+              success: function(data){//alert(data);
+                  var namelist = document.getElementById("dname");
+                  namelist.length=0;
+                  var blankopt = document.createElement("option");
+                  blankopt.text="";
+                  blankopt.value="";
+                  namelist.appendChild(blankopt);
+                  for (i=0;i<data.length;i++){
+                      var option = document.createElement("option");
+                      option.setAttribute('doctor_id',data[i].id);
+                      option.text = data[i].firstname + " " + data[i].lastname;
+                      option.value = data[i].firstname + " " + data[i].lastname;
+                      namelist.appendChild(option);
+                  }
+                  //document.getElementById("doctname").innerHTML = data[0].firstname + " " + data[0].lastname;
+              },
+              failure: function(errMsg) {
+                  alert(errMsg);
+              }
+          });
+
+
+      }
+  </script>
 </body>
