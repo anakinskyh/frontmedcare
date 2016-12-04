@@ -13,9 +13,24 @@ app.get('/patient', function(req, res) {
     res.sendfile(__dirname + '/patient.html');
 });
 
-app.get('/', function(req, res) {
-    res.sendfile(__dirname + '/index.html');
+//patient
+app.get('/patient/makeappt', function(req, res) {
+    res.sendfile(__dirname + '/public/patient/makeappt.html');
 });
+
+app.get('/patient/viewappt', function(req, res) {
+    res.sendfile(__dirname + '/public/patient/viewappt.html');
+});
+
+app.get('/patient/personalinfo', function(req, res) {
+    res.sendfile(__dirname + '/public/patient/personalinfo.html');
+});
+
+
+app.get('/patient/dispensation', function(req, res) {
+    res.sendfile(__dirname + '/public/patient/dispensation.html');
+});
+
 
 
 
