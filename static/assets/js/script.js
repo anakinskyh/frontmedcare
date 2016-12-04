@@ -34,5 +34,4 @@ app.controller('patientMakeApptController', function($scope) {
 	console.log('load patient');
 	//$scope.sometext = "I'm good.";
 	$scope.activepath = 'assets/html/patientMakeAppt.html';
-
 });

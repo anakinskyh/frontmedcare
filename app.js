@@ -4,13 +4,20 @@ var express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server);
 
-server.listen(9000);
+server.listen(9010);
 
 app.use(express.static(__dirname + '/static'));
+
+//write router here
+app.get('/patient', function(req, res) {
+    res.sendfile(__dirname + '/patient.html');
+});
 
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/index.html');
 });
+
+
 
 io.sockets.on('connection', function(socket) {
     socket.on('send message', function(data) {
