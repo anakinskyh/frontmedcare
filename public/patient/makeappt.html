@@ -10,7 +10,13 @@
     <script>
         $(".header").load("/assets/html/header.html");
     </script>
-    <div>
+    <div id="wrapper" ng-app="myApp">
+      <div class="navbar"></div>
+      <script>
+          $(".navbar").load("/assets/html/patientnav.html", function(){
+            $("#makeappt").addClass("active");
+          });
+      </script>
         <h1>Make an appointment for me</h1>
     </div>
 </body>
