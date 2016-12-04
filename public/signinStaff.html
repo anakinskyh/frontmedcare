@@ -73,7 +73,7 @@
                                     sessionStorage.lastname = data[0].lastname;
                                     sessionStorage.type = data[0].role;
                                     if(data[0].role=="doctor")
-                                    window.location = "/patient/viewappt";
+                                    window.location = "/doctor/viewappt";
                                     else if(data[0].role=="admin")
                                     window.location = "/admin/addstaff";
                                     else if(data[0].role=="pharmacist") 
@@ -81,7 +81,7 @@
                                     else if(data[0].role=="nurse")
                                       window.location = "patient_information.html";
                                     else if(data[0].role=="staff")
-                                      window.location ="/patient/viewappt";
+                                      window.location ="/doctor/viewappt";
                                   }
                       
                             },
