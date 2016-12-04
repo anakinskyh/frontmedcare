@@ -58,7 +58,7 @@ app.get('/doctor/healthrecord', function(req, res) {
     res.sendfile(__dirname + '/public/doctor/healthrecord.html');
 });
 
-//doctor
+//pharmacist
 app.get('/pharmacist/viewdispensation', function(req, res) {
     res.sendfile(__dirname + '/public/pharmacist/viewdispensation.html');
 });
