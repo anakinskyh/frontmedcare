@@ -12,7 +12,18 @@ app.use(express.static(__dirname + '/static'));
 app.get('/patient', function(req, res) {
     res.sendfile(__dirname + '/patient.html');
 });
-
+app.get('/', function(req, res) {
+    res.sendfile(__dirname + '/public/signin.html');
+});
+app.get('/signinstaff', function(req, res) {
+    res.sendfile(__dirname + '/public/signinStaff.html');
+});
+app.get('/forgetpassword', function(req, res) {
+    res.sendfile(__dirname + '/public/forgetpassword.html');
+});
+app.get('/forgetpasswordstuff', function(req, res) {
+    res.sendfile(__dirname + '/public/forgetpasswordstuff.html');
+});
 //patient
 app.get('/patient/makeappt', function(req, res) {
     res.sendfile(__dirname + '/public/patient/makeappt.html');
