@@ -58,7 +58,24 @@ app.get('/doctor/healthrecord', function(req, res) {
     res.sendfile(__dirname + '/public/doctor/healthrecord.html');
 });
 
-//doctor
+//staff
+app.get('/staff/makeappt', function(req, res) {
+    res.sendfile(__dirname + '/public/staff/makeappt.html');
+});
+
+app.get('/staff/viewappt', function(req, res) {
+    res.sendfile(__dirname + '/public/staff/viewappt.html');
+});
+
+app.get('/staff/roundtimetable', function(req, res) {
+    res.sendfile(__dirname + '/public/staff/roundtimetable.html');
+});
+
+app.get('/staff/patientinfo', function(req, res) {
+    res.sendfile(__dirname + '/public/staff/patientinfo.html');
+});
+
+//pharmacist
 app.get('/pharmacist/viewdispensation', function(req, res) {
     res.sendfile(__dirname + '/public/pharmacist/viewdispensation.html');
 });

@@ -23,10 +23,183 @@
 
         <div class="container-fluid">
 
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        รายการนัดหมาย
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="form-inline">
+                            เลือกวันที่ที่ต้องการค้นหา :
+                            <input type="date" class="form-control" id="cdate">
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <button class="btn btn-sm btn-primary" type="button" onclick="getChosenTime()"> ค้นหา</button>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped" >
+                            <thead>
+                                <tr>
+                                    <th>วันที่</th>
+                                    <th>เวลา</th>
+                                    <th>ชื่อผู้ป่วย</th>
+                                    <th>รายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apmlist">
+                                <tr class="clickable-row"></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+                <form action="/doctor/makeappt">
+                    <button class="btn btn-primary" type="submit"> + เพิ่มรายการนัดหมาย</button>
+                </form>
+
+                <div class="modal fade" id="presModal" tabindex="-1" role="dialog" aria-labelledby="presModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="presModalLabel" style="text-align:center">ทำการรักษา</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <!-- left column -->
+
+                      <div class="col-lg-12 table-responsive">
+                        <table class="table table-bordered">
+                          <tr>
+                            <th tyle="align:center"><button class="btn btn-sm btn-primary" type="button" onclick="makerecord()"> ยืนยัน</button></th>
+
+                          </tr>
+
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">ปิด</button>
+                  </div>
+                </div>
+              </div>
+            </div>
         </div>
         <!-- /.container-fluid -->
 
     </div>
     <!-- /#page-wrapper -->
   </div>
+
+  <script type="text/javascript">
+      function getChosenTime() {
+          var did = sessionStorage.id;
+          var date = document.getElementById("cdate").value;
+          var st,e;
+          //sessionStorage.firstname||lastname||id||role ไว้ใช้เรียกค่าที่าเก็บไว้ตอนlogin
+              st = date;
+              e = date;
+
+          //alert(did + " " + st + " " +e + " " + document.getElementById("time").value);
+          var markers = {'doctor_id': did,'start':st,'end':e};
+          $.ajax({
+              type: "POST",
+              url: "http://139.59.234.220:5050/api/v1/getdoctorattplist",
+              data: JSON.stringify(markers ),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              async: false,
+              timeout: 2000,
+              success: function(data){//alert(data);
+                  //alert(data[0]);
+                  var list = document.getElementById("apmlist");
+                  while (list.rows.length>0) list.deleteRow(0);
+                  for (i=0;i<data.length;i++) {
+                      var row = list.insertRow(list.rows.length);
+                      row.className="clickable-row";
+                      row.setAttribute('data-value',data[i].appointment_id);
+                      var datecell = row.insertCell(0);
+                      var timecell = row.insertCell(1);
+                      var pnamecell = row.insertCell(2);
+                      var detailcell = row.insertCell(3);
+
+                      var datetext = document.createTextNode(data[i].date);
+                      var timetext = document.createTextNode(data[i].time);
+                      var pnametext = document.createTextNode(data[i].firstname+" "+data[i].lastname);
+                      var detailtext = document.createTextNode(data[i].syntom);
+
+                      //alert(datetext+" "+timetext+" "+pnametext+" "+detailtext);
+                      datecell.appendChild(datetext);
+                      timecell.appendChild(timetext);
+                      pnamecell.appendChild(pnametext);
+                      detailcell.appendChild(detailtext);
+                  }
+
+                      $(function(){
+                          $(".clickable-row").click(function(){
+                           x= $(this).data('value');
+                          //alert('click');
+                          $('#presModal').modal('toggle')
+                          $('#presModal').modal('show')
+      //window.location = "prescription-detail.html"
+    })
+  })
+              },
+              failure: function(errMsg) {
+                  alert(errMsg);
+              }
+          });
+      }
+  </script>
+
+  <script>
+      function makerecord(){
+
+
+          //var appointment_id=
+          markers = {"appointment_id":x}
+            var check =false;
+                      $.ajax({
+                          type: "POST",
+                          url: "http://139.59.234.220:5050/api/v1/addhealthrecord",
+                          // The key needs to match your method's input parameter (case-sensitive).
+                          data: JSON.stringify(markers),
+                          contentType: "application/json; charset=utf-8",
+                          dataType: "json",
+                          async:false,
+                          success: function(data){//alert(data);
+                              // alert(data[0].name);
+                              if(data =='The appointment id has already been taken.'){
+                                  alert('รายการนี้ได้รับการรักษาแล้ว');
+
+                              }
+                              else {
+                                  alert('ok');
+                                  sessionStorage.tempid=x;
+                                  sessionStorage.gethr='appt';
+                                  window.location = "/doctor/healthrecord";
+                              }
+
+                          },
+                          failure: function(errMsg) {
+                          alert(errMsg);
+                  }
+              });
+      }
+  </script>
 </body>

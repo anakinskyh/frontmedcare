@@ -23,10 +23,198 @@
 
         <div class="container-fluid">
 
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                      ตารางออกตรวจแพทย์
+                    </h1>
+                </div>
+            </div>
+
+            <!-- /.row -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-4 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                          วันที่ :
+                          <input class="form-control" type="date" id="aday">
+                          <button class="btn btn-sm btn-primary" id="searchbtn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> ค้นหา</button>
+                          <button class="btn btn-sm btn-info" type="button" id="showall"><i class="fa fa-fw fa-list"></i> แสดงทั้งหมด</button>
+                      </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                  <thead>
+                      <tr>
+                          <th>วันที่</th>
+                          <th>เวลา</th>
+                          <th>จัดการ</th>
+                      </tr>
+                  </thead>
+                  <tbody class="clickable-row">
+                  </tbody>
+                </table>
+                <div class="pull-right">
+                  <a role="button" class="btn btn-sm btn-primary" onclick="clearAddRound()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> เพิ่ม</a>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row" id="addroundbar">
+              <form class="col-md-12 form-inline" id="addRoundF">
+                <!-- <div class="col-md-4 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                          วันที่ :
+                          <input class="form-control" type="date">
+                      </li>
+                      <li class="form-inline">
+                          เวลา :
+                          <select class="form-control">
+                            <option selected>ทั้งวัน</option>
+                            <option>เช้า</option>
+                            <option>บ่าย</option>
+                          </select>
+                      </li>
+                  </ol>
+                </div> -->
+              </form>
+              <div class="col-sm-offset-5">
+                <button class="btn btn-sm btn-default" onclick="moreAddRound()">เพิ่มเติม</button>
+                <button class="btn btn-sm btn-default" onclick="addRound()">เพิ่มเวลาออกตรวจ</button>
+              </div>
+            </div>
         </div>
         <!-- /.container-fluid -->
 
     </div>
     <!-- /#page-wrapper -->
   </div>
+
+  <!-- custom script -->
+  <script>
+  //-------------------------------------------------------------------------------
+  var roundList = [];
+
+  $('#addroundbar').hide();
+
+  function pushRound(round){
+    roundList.push(round);
+    $(".clickable-row").append("<tr><td>"+round.date+"</td>"
+                              +"<td>"+round.time+"</td>"
+                              +"<td>"+
+                              "<button class=\"btn btn-sm btn-danger\">ลบ</button>"
+                              +"</td></tr>");
+  }
+
+  function clearAddRound(){
+    $('#addRoundF').empty();
+    moreAddRound();
+    $('#addroundbar').show();
+  }
+
+  function moreAddRound(){
+    $('#addRoundF').append("<div class=\"col-md-4 form-group\" name=\"addform\">"+
+                              "<ol class=\"breadcrumb\">"+
+                                "<li class=\"form-inline\">"+
+                                  "วันที่ : "+
+                                  "<input class=\"form-control\" type=\"date\">"+
+                                "</li>"+
+                                "<li class=\"form-inline\">"+
+                                  "เวลา : "+
+                                  "<select class=\"form-control\">"+
+                                    "<option selected>เช้า</option>"+
+                                    "<option>บ่าย</option>"+
+                                  "</select>"+
+                                "</li>"+
+                              "</ol>"+
+                            "</div>")
+  }
+
+  function addRound(){
+    $('div[name="addform"]').each(function(){
+      var date = $(this).find('input').val();
+      var time = $(this).find('select :selected').text()
+      if(date.length){
+        $.post("http://139.59.234.220:5050/api/v1/addroundtime",
+        {
+            doctor_id : sessionStorage.id,
+            date : date,
+            time : time
+        })
+        .done(function(data,status){
+            alert("Status: " + status);
+            pushRound({date:date,time:time})
+            $('#addroundbar').hide();
+        })
+        .fail(function(xhr,status,error){
+          alert(status+": "+xhr.statusText)
+        })
+      }
+    })
+  }
+
+  $(function(){
+    $.post("http://139.59.234.220:5050/api/v1/getavailabletime",
+    {
+        doctor_id : sessionStorage.id
+    })
+    .done(function(data,status){
+        //alert("Data: " + data[0].ssn + "\nStatus: " + status);
+        for(i=0;i<data.length;i++){
+          pushRound({date:data[i].date,time:data[i].time});
+        }
+    })
+    .fail(function(xhr,status,error){
+      alert(status+": "+xhr.statusText)
+    })
+    $(".clickable-row").on('click','button.btn-danger',(function(event){
+      var ix = $(this).closest('tr').index();
+      var row = $(this).parent().parent();
+      // alert(ix)
+      $.post("http://139.59.234.220:5050/api/v1/cancelroundtime",
+      {
+          doctor_id : sessionStorage.id,
+          date : roundList[ix].date,
+          time : roundList[ix].time
+      })
+      .done(function(data,status){
+          alert("Status: " + status);
+          roundList.splice(ix,1);
+          row.remove();
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      })
+    }))
+    $('#searchbtn').click(function(){
+      var dateinput = $('#aday').val()
+      //alert("|"+nameinput+"|"+dateinput+"|"+timeinput+"|")
+      $(".clickable-row tr").each(function(index) {
+            $row = $(this)
+
+            var cd = $row.find("td:eq(0)").text()
+            //alert(c1+"|"+c2+"|"+c3)
+
+            if (cd.indexOf(dateinput) !== 0) {
+                $row.hide()
+            }
+            else {
+                $row.show()
+            }
+      })
+    })
+    $('#showall').click(function(){
+      $("table tbody tr").each(function(index) {
+        $(this).show()
+      })
+    })
+  });
+  </script>
 </body>

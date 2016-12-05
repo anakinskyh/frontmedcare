@@ -1,0 +1,297 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+</script>
+</head>
+<body>
+  <div class="header"></div>
+  <script>
+      $(".header").load("/assets/html/header.html");
+  </script>
+  <div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top navigatebar" role="navigation"></nav>
+    <script>
+        $(".navigatebar").load("/assets/html/staffnav.html", function(){
+          $("#roundtimetable").addClass("active");
+        });
+    </script>
+
+    <!-- page content -->
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                      ตารางออกตรวจแพทย์
+                    </h1>
+                </div>
+            </div>
+
+            <!-- /.row -->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="col-md-4 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-group">
+                          <label>แผนกและแพทย์ที่ต้องการพบ</label>
+                          <select class="form-control" id="dept" onchange="getDocName()">
+                              <option class="disabled"> --รายชื่อแผนก--</option>
+                              <option value="อายุรกรรม"> อายุรกรรม</option>
+                              <option value="ศัลยกรรม"> ศัลยกรรม</option>
+                              <option value="สูติ"> สูติ</option>
+                              <option value="จักษุ"> จักษุ</option>
+                              <option value="โรคผิวหนัง"> โรคผิวหนัง</option>
+                              <option value="อวัยวะปัสสาวะ"> อวัยวะปัสสาวะ</option>
+                              <option value="หัวใจ"> หัวใจ</option>
+                              <option value="หู คอ จมูก"> หู คอ จมูก</option>
+                              <option value="รังสี"> รังสี</option>
+                              <option value="รักษาโรคในช่องปากและฟัน"> รักษาโรคในช่องปากและฟัน</option>
+                          </select>
+                      </li>
+                  </ol>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="col-md-4 form-group">
+                  <ol class="breadcrumb">
+                    <li class="form-group">
+                        <select class="form-control" id="dname">
+                        </select>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-md-4 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-group">
+                          <label>วันที่</label>
+                          <input class="form-control" type="date" id="aday">
+                      </li>
+                  </ol>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <button class="btn btn-sm btn-primary" id="searchbtn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> ค้นหา</button>
+                  <button class="btn btn-sm btn-info" type="button" id="showall"><i class="fa fa-fw fa-list"></i> แสดงทั้งหมด</button>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="roundtable">
+              <div class="col-md-6 table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                  <thead>
+                      <tr>
+                          <th>วันที่</th>
+                          <th>เวลา</th>
+                          <th>จัดการ</th>
+                      </tr>
+                  </thead>
+                  <tbody class="clickable-row">
+                  </tbody>
+                </table>
+                <div class="pull-right">
+                  <a role="button" class="btn btn-sm btn-primary" onclick="clearAddRound()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> เพิ่ม</a>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row" id="addroundbar">
+              <form class="col-md-12 form-inline" id="addRoundF">
+                <!-- <div class="col-md-4 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                          วันที่ :
+                          <input class="form-control" type="date">
+                      </li>
+                      <li class="form-inline">
+                          เวลา :
+                          <select class="form-control">
+                            <option selected>ทั้งวัน</option>
+                            <option>เช้า</option>
+                            <option>บ่าย</option>
+                          </select>
+                      </li>
+                  </ol>
+                </div> -->
+              </form>
+              <div class="col-sm-offset-5">
+                <button class="btn btn-sm btn-default" onclick="moreAddRound()">เพิ่มเติม</button>
+                <button class="btn btn-sm btn-default" onclick="addRound()">เพิ่มเวลาออกตรวจ</button>
+              </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- /#page-wrapper -->
+  </div>
+
+  <!-- custom script -->
+  <script>
+  //-------------------------------------------------------------------------------
+  var roundList = [];
+  var doctorID;
+
+  $('#roundtable').hide();
+  $('#addroundbar').hide();
+
+  function pushRound(round){
+    roundList.push(round);
+    $(".clickable-row").append("<tr><td>"+round.date+"</td>"
+                              +"<td>"+round.time+"</td>"
+                              +"<td>"+
+                              "<button class=\"btn btn-sm btn-danger\">ลบ</button>"
+                              +"</td></tr>");
+  }
+
+  function clearAddRound(){
+    $('#addRoundF').empty();
+    moreAddRound();
+    $('#addroundbar').show();
+  }
+
+  function moreAddRound(){
+    $('#addRoundF').append("<div class=\"col-md-4 form-group\" name=\"addform\">"+
+                              "<ol class=\"breadcrumb\">"+
+                                "<li class=\"form-inline\">"+
+                                  "วันที่ : "+
+                                  "<input class=\"form-control\" type=\"date\">"+
+                                "</li>"+
+                                "<li class=\"form-inline\">"+
+                                  "เวลา : "+
+                                  "<select class=\"form-control\">"+
+                                    "<option selected>เช้า</option>"+
+                                    "<option>บ่าย</option>"+
+                                  "</select>"+
+                                "</li>"+
+                              "</ol>"+
+                            "</div>")
+  }
+
+  function addRound(){
+    $('div[name="addform"]').each(function(){
+      var date = $(this).find('input').val();
+      var time = $(this).find('select :selected').text()
+      if(date.length){
+        $.post("http://139.59.234.220:5050/api/v1/addroundtime",
+        {
+            doctor_id : doctorID,
+            date : date,
+            time : time
+        })
+        .done(function(data,status){
+            alert("Status: " + status);
+            pushRound({date:date,time:time})
+            $('#addroundbar').hide();
+        })
+        .fail(function(xhr,status,error){
+          alert(status+": "+xhr.statusText)
+        })
+      }
+    })
+  }
+
+  $(function(){
+    $(".clickable-row").on('click','button.btn-danger',(function(event){
+      var ix = $(this).closest('tr').index();
+      var row = $(this).parent().parent();
+      // alert(ix)
+      $.post("http://139.59.234.220:5050/api/v1/cancelroundtime",
+      {
+          doctor_id : doctorID,
+          date : roundList[ix].date,
+          time : roundList[ix].time
+      })
+      .done(function(data,status){
+          alert("Status: " + status);
+          roundList.splice(ix,1);
+          row.remove();
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      })
+    }))
+    $('#searchbtn').click(function(){
+      $('#roundtable').show();
+      $('#addroundbar').hide();
+      doctorID = $('#dname').find(":selected").val();
+
+      $.post("http://139.59.234.220:5050/api/v1/getavailabletime",
+      {
+          doctor_id : doctorID
+      })
+      .done(function(data,status){
+          //alert("Data: " + data[0].ssn + "\nStatus: " + status);
+          $(".clickable-row").empty();
+          roundList.length = 0;
+          for(i=0;i<data.length;i++){
+            pushRound({date:data[i].date,time:data[i].time});
+          }
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      })
+
+      var dateinput = $('#aday').val()
+      //alert("|"+nameinput+"|"+dateinput+"|"+timeinput+"|")
+      $(".clickable-row tr").each(function(index) {
+            $row = $(this)
+
+            var cd = $row.find("td:eq(0)").text()
+            //alert(c1+"|"+c2+"|"+c3)
+
+            if (cd.indexOf(dateinput) !== 0) {
+                $row.hide()
+            }
+            else {
+                $row.show()
+            }
+      })
+    })
+    $('#showall').click(function(){
+      $("table tbody tr").each(function(index) {
+        $(this).show()
+      })
+    })
+  });
+  </script>
+  <script type="text/javascript">
+      function getDocName() {
+          var sendData = document.getElementById("dept").value;
+          var markers = {'deptname': sendData};
+          var list;
+          $.ajax({
+              type: "POST",
+              url: "http://139.59.234.220:5050/api/v1/getdoctorname",
+              data: JSON.stringify(markers ),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              async: false,
+              timeout: 2000,
+              success: function(data){//alert(data);
+                  var namelist = document.getElementById("dname");
+                  namelist.length=0;
+                  for (i=0;i<data.length;i++){
+                      var option = document.createElement("option");
+                      option.setAttribute('doctor_id',data[i].id);
+                      option.text = data[i].firstname + " " + data[i].lastname;
+                      option.value = data[i].id;
+                      namelist.appendChild(option);
+                  }
+                 // document.getElementById("doctname").innerHTML = data[0].firstname + " " + data[0].lastname;
+              },
+              failure: function(errMsg) {
+                  alert(errMsg);
+              }
+          });
+      }
+  </script>
+</body>
+</html>

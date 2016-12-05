@@ -4,6 +4,7 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
 </script>
+<link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 <body>
   <div class="header"></div>
@@ -23,10 +24,551 @@
 
         <div class="container-fluid">
 
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                      รายการการรักษา
+                    </h1>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div id="searchbar" class="row">
+              <form class="form-inline">
+                <div class="col-lg-3 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                        ชื่อ-นามสกุลผู้ป่วย
+                        <input class="form-control" id="namesearch">
+                      </li>
+                  </ol>
+                </div>
+                <div class="col-lg-2 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                          วันที่ :
+                          <input class="form-control" type="date" id="aday">
+                      </li>
+                  </ol>
+                </div>
+                <div class="col-lg-2 form-group">
+                  <ol class="breadcrumb">
+                    <li class="form-inline">
+                      เวลา :
+                      <select class="form-control" id="atime">
+                        <option selected>ทั้งวัน</option>
+                        <option>เช้า</option>
+                        <option>บ่าย</option>
+                      </select>
+                    </li>
+                  </ol>
+                </div>
+                <div class="col-lg-12">
+                    <button class="btn btn-sm btn-default" type="button" id="searchBtn"><i class="fa fa-fw fa-search"></i> ค้นหา</button>
+                    <button class="btn btn-sm btn-default" type="reset"><i class="fa fa-fw fa-refresh"></i> รีเซ็ต</button>
+                    <button class="btn btn-sm btn-info" type="button" id="showall"><i class="fa fa-fw fa-list"></i> แสดงทั้งหมด</button>
+                </div>
+              </form>
+            </div>
+            <br>
+        <div id="hrtable" class="row">
+          <div class="col-lg-12 table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+              <thead>
+                  <tr>
+                      <th>วันที่</th>
+                      <th>เวลา</th>
+                      <th>ID ผู้ป่วย</th>
+                      <th>รายละเอียด</th>
+                  </tr>
+              </thead>
+              <tbody class="clickable-row">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="addhrbar" class="row">
+          <div class="col-md-12 pull-right">
+            <form class="form-inline">
+              <div class="col-md-4 form-group">
+                <ol class="breadcrumb">
+                  <li class="form-inline">
+                    <label>Appointment ID</label>
+                    <input type="number" class="form-group" placeholder="ไอดีการนัดหมาย" id="appidinput">
+                  </li>
+                  <li class="form-inline">
+                    <button class="btn btn-sm btn-primary" id="addbutton"><i class="fa fa-fw fa-plus"></i> เพิ่ม</button>
+                  </li>
+                </ol>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="moredescbtnbar" class="row">
+          <div class="col-lg-12">
+            <a role="button" class="btn btn-sm btn-warning" onclick="showEditDesc()"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> แก้ไข</a>
+            <a role="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#preModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> เพิ่มการสั่งยา</a>
+            <a role="button" class="btn btn-sm btn-default" onclick="showHRTable()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> กลับ</a>
+          </div>
+        </div>
+        <br>
+        <div id="moredesctable" class="row">
+          <div class="col-lg-12 table-responsive">
+            <table class="table table-bordered">
+              <tr>
+                <th>Health Record ID</th>
+                <td id="hr_id"></td>
+                <th>ประเภท</th>
+                <td>นัดหมายล่วงหน้า</td>
+              </tr>
+              <tr>
+                <th>วันที่</th>
+                <td id="hr_date"></td>
+                <th>เวลา</th>
+                <td id="hr_time"></td>
+              </tr>
+              <tr>
+                <th>ชื่อผู้ป่วย</th>
+                <td id="p_name"></td>
+                <th>Patient ID</th>
+                <td id="p_id"></td>
+              </tr>
+              <tr>
+                <th>ชื่อแพทย์</th>
+                <td id="d_name"></td>
+                <th>Doctor ID</th>
+                <td id="d_id"></td>
+              </tr>
+              <tr>
+                <th colspan="4"><i>ข้อมูลส่วนตัวผู้ป่วย</i></th>
+              </tr>
+              <tr>
+                <th>น้ำหนัก</th>
+                <td id="p_weight"></td>
+                <th>ส่วนสูง</th>
+                <td id="p_height"></td>
+              </tr>
+              <tr>
+                <th>อุณหภูมิ</th>
+                <td id="p_temp"></td>
+                <th>ชีพจร</th>
+                <td id="p_hrate"></td>
+              </tr>
+              <tr>
+                <th>ความดันโลหิต</th>
+                <td id="p_bp"></td>
+                <th>กรุ๊ปเลือด</th>
+                <td id="p_blood"></td>
+              </tr>
+              <tr>
+                <th colspan="4"><i>อาการผู้ป่วย<i></th>
+              </tr>
+              <tr>
+                <th>รหัสโรค</th>
+                <td colspan="3" id="p_icd10"></td>
+              </tr>
+              <tr>
+                <th>อาการ</th>
+                <td colspan="3" id="p_symtom"></td>
+              </tr>
+              <tr>
+                <th>ผลการวินิจฉัย</th>
+                <td colspan="3" id="p_diag"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div id="edithrtable" class="row">
+          <div class="col-lg-12 table-responsive">
+            <h3>แก้ไข</h3>
+            <br><br>
+            <table class="table table-bordered">
+              <tr>
+                <th>Health Record ID</th>
+                <td id="ehr_id"></td>
+                <th>ประเภท</th>
+                <td>นัดหมายล่วงหน้า</td>
+              </tr>
+              <tr>
+                <th>วันที่</th>
+                <td id="ehr_date"></td>
+                <th>เวลา</th>
+                <td id="ehr_time"></td>
+              </tr>
+              <tr>
+                <th>ชื่อผู้ป่วย</th>
+                <td id="ep_name"></td>
+                <th>Patient ID</th>
+                <td id="ep_id"></td>
+              </tr>
+              <tr>
+                <th>ชื่อแพทย์</th>
+                <td id="ed_name"></td>
+                <th>Doctor ID</th>
+                <td id="ed_id"></td>
+              </tr>
+              <tr>
+                <th colspan="4"><i>ข้อมูลส่วนตัวผู้ป่วย</i></th>
+              </tr>
+              <tr>
+                <th>น้ำหนัก</th>
+                <td><input class="form-control" type="number" id="ep_weight"></td>
+                <th>ส่วนสูง</th>
+                <td><input class="form-control" type="number" id="ep_height"></td>
+              </tr>
+              <tr>
+                <th>อุณหภูมิ</th>
+                <td><input class="form-control" type="text" id="ep_temp"></td>
+                <th>ชีพจร</th>
+                <td><input class="form-control" type="number" id="ep_hrate"></td>
+              </tr>
+              <tr>
+                <th>ความดันโลหิต</th>
+                <td><input class="form-control" type="text" id="ep_bp"></td>
+                <th>กรุ๊ปเลือด</th>
+                <td id="ep_blood"></td>
+              </tr>
+              <tr>
+                <th colspan="4"><i>อาการผู้ป่วย<i></th>
+              </tr>
+              <tr>
+                <th>รหัสโรค</th>
+                <td colspan="3"><input class="form-control" type="text" id="ep_icd10"></td>
+              </tr>
+              <tr>
+                <th>อาการ</th>
+                <td colspan="3"><textarea class="form-control" id="ep_symtom" rows="3"></textarea></td>
+              </tr>
+              <tr>
+                <th>ผลการวินิจฉัย</th>
+                <td colspan="3"><textarea class="form-control" id="ep_diag" rows="3"></textarea></td>
+              </tr>
+            </table>
+              <div class="col-md-offset-11 pull-right">
+                <a role="button" class="btn btn-sm btn-primary" id="confirm_button">ยืนยัน</a>
+                <button class="btn btn-sm btn-danger" onclick="showMoreDesc()">ยกเลิก</button>
+              </div>
+          </div>
+        </div>
+
+          <div class="modal fade" id="preModal" tabindex="-1" role="dialog" aria-labelledby="preModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="preModalLabel">การสั่งยา</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- left column -->
+                    <form class="col-md-12 form-inline" id="addTreatF">
+                      <div class="col-md-9 form-group" name="addform">
+                        <ol class="breadcrumb">
+                            <li class="form-inline">
+                                ID ยา :
+                                <input class="form-control" type="number" name="dgid">
+                            </li>
+                            <li class="form-inline">
+                                ปริมาณ :
+                                <input class="form-control" type="number" name="ninput">
+                            </li>
+                        </ol>
+                      </div>
+                    </form>
+                    <div class="col-sm-offset-5">
+                      <button class="btn btn-sm btn-default" onclick="moreDrug()">เพิ่มยา</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirmDisp">เพิ่มการสั่งยา</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">ปิด</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <!-- /.container-fluid -->
 
     </div>
     <!-- /#page-wrapper -->
+
   </div>
+
+  <!-- custom script -->
+  <script>
+    var treatList = [];
+    var indexTreat = 0;
+
+    function addTreat(treat){
+      treatList.push(treat);
+    }
+
+    function sortTreat(){
+      treatList.sort(function(a,b){
+        return new Date(b.date)-new Date(a.date);
+      });
+    }
+
+    function appndTreat(){
+      for(i=0;i<treatList.length;i++)
+      $(".clickable-row").append("<tr>"
+                                +"<td>"+treatList[i].date+"</td>"
+                                +"<td>"+treatList[i].time+"</td>"
+                                +"<td>"+treatList[i].pid+"</td>"
+                                +"<td>"+treatList[i].symtom+"</td></tr>");
+    }
+
+    function moreDrug(){
+      $('#addTreatF').append("<div class=\"col-md-9 form-group\" name=\"addform\">"+
+                                "<ol class=\"breadcrumb\">"+
+                                  "<li class=\"form-inline\">"+
+                                    "ID ยา : "+
+                                    "<input class=\"form-control\" type=\"number\" name=\"dgid\"> "+
+                                  "</li>"+
+                                  "<li class=\"form-inline\">"+
+                                    "ปริมาณ : "+
+                                    "<input class=\"form-control\" type=\"number\" name=\"ninput\">"+
+                                  "</li>"+
+                                "</ol>"+
+                              "</div>")
+    }
+
+    function showMoreDesc(){
+      $('#searchbar').hide();
+      $('#hrtable').hide();
+      $('#addhrbar').hide();
+      $('#moredescbtnbar').show();
+      $('#moredesctable').show();
+      $('#edithrtable').hide();
+    }
+
+    function showEditDesc(){
+      $('#searchbar').hide();
+      $('#hrtable').hide();
+      $('#addhrbar').hide();
+      $('#moredescbtnbar').hide();
+      $('#moredesctable').hide();
+      $('#edithrtable').show();
+    }
+
+    function showHRTable(){
+      $('#searchbar').show();
+      $('#hrtable').show();
+      $('#addhrbar').show();
+      $('#moredescbtnbar').hide();
+      $('#moredesctable').hide();
+      $('#edithrtable').hide();
+    }
+
+    function postHR(){
+      $.post("http://139.59.234.220:5050/api/v1/getpatientinfo",
+      {
+        patient_id : treatList[indexTreat].pid
+      })
+      .done(function(data,status){
+        $("#p_name").text(data[0].firstname+" "+data[0].lastname);
+        $("#p_blood").text(data[0].blood);
+
+        $("#ep_name").text(data[0].firstname+" "+data[0].lastname);
+        $("#ep_blood").text(data[0].blood);
+      })
+      .fail(function(xhr,status,error){
+      })
+      $.post("http://139.59.234.220:5050/api/v1/gethrbyid",
+      {
+        hr_id : treatList[indexTreat].hrid
+      })
+      .done(function(data,status){
+        treatList[indexTreat].weight = data[0].weight;
+        treatList[indexTreat].height = data[0].height;
+        treatList[indexTreat].pulse = data[0].pulse;
+        treatList[indexTreat].temp = data[0].temp;
+        treatList[indexTreat].pressure = (data[0].bp_sys+" "+data[0].bp_dia);
+        treatList[indexTreat].symtom = data[0].syntom;
+        treatList[indexTreat].icd10 = data[0].diagnose;
+        treatList[indexTreat].diagnose = data[0].icd10;
+
+        $('#p_weight').text(data[0].weight);
+        $('#p_height').text(data[0].height);
+        $('#p_hrate').text(data[0].pulse);
+        $('#p_temp').text(data[0].temp);
+        $('#p_bp').text(data[0].bp_sys+" "+data[0].bp_dia);
+        $('#p_symtom').text(data[0].syntom);
+        $('#p_icd10').text(data[0].icd10);
+        $('#p_diag').text(data[0].diagnose);
+
+        $('#ep_weight').val(data[0].weight);
+        $('#ep_height').val(data[0].height);
+        $('#ep_hrate').val(data[0].pulse);
+        $('#ep_temp').val(data[0].temp);
+        $('#ep_bp').val(data[0].bp_sys+" "+data[0].bp_dia);
+        $('#ep_symtom').val(data[0].syntom);
+        $('#ep_icd10').val(data[0].icd10);
+        $('#ep_diag').val(data[0].diagnose);
+
+        showMoreDesc();
+      })
+      .fail(function(xhr,status,error){
+      })
+    }
+
+    // $(".hr_id").html("test");
+
+  $(function(){
+    var currentDate = new Date();
+    // alert(currentDate.getFullYear()+"-"+(currentDate.getMonth()+1)+"-"+currentDate.getDate()+" "+currentDate.toTimeString().split(" ")[0])
+
+    showHRTable();
+
+    $.post("http://139.59.234.220:5050/api/v1/gethrlistbydoctorid",
+    {
+        doctor_id : sessionStorage.id,
+        start : "2016-11-01",
+        end : "2020-12-31"
+    })
+    .done(function(data,status){
+        //alert("Data: " + data[0].ssn + "\nStatus: " + status);
+        for(i=0;i<data.length;i++){
+          addTreat({hrid:data[i].id,date:data[i].date,time:data[i].time,
+            symtom:data[i].syntom,weight:data[i].weight,
+            height:data[i].height,temp:data[i].temp,pulse:data[i].pulse,
+            pressure:(data[i].bp_sys+" "+data[i].bp_dia),diagnose:data[i].diagnose,icd10:data[i].icd10,
+            pid:data[i].patient_id,apptid:data[i].appointment_id,did:data[i].doctor_id})
+        }
+        sortTreat();
+        appndTreat();
+    })
+    .fail(function(xhr,status,error){
+      alert(status+": "+xhr.statusText)
+    });
+
+    $('#searchBtn').click(function(){
+      var nameinput = $('#namesearch').val()
+      var dateinput = $('#aday').val()
+      var timetemp = $('#atime').find(":selected").text()
+      var timeinput = (timetemp==="ทั้งวัน") ? "" : timetemp
+      //alert("|"+nameinput+"|"+dateinput+"|"+timeinput+"|")
+      $(".clickable-row tr").each(function(index) {
+            $row = $(this)
+
+            var c1 = $row.find("td:eq(2)").text()
+            var c2 = $row.find("td:eq(0)").text()
+            var c3 = $row.find("td:eq(1)").text()
+            //alert(c1+"|"+c2+"|"+c3)
+
+            if (c1.indexOf(nameinput) < 0 || c2.indexOf(dateinput) !== 0 || c3.indexOf(timeinput) !== 0) {
+                $row.hide()
+            }
+            else {
+                $row.show()
+            }
+      })
+    })
+
+    $(".clickable-row").on('click','tr',(function(event){
+      var indexT = $(this).index();
+      indexTreat = indexT;
+
+      postHR();
+
+      $("#hr_id").text(treatList[indexTreat].hrid);
+      $('#hr_date').text(treatList[indexTreat].date);
+      $('#hr_time').text(treatList[indexTreat].time);
+      $('#p_id').text(treatList[indexTreat].pid);
+      $('#d_name').text(sessionStorage.firstname+" "+sessionStorage.lastname);
+      $('#d_id').text(treatList[indexTreat].did);
+
+      $("#ehr_id").text(treatList[indexTreat].hrid);
+      $('#ehr_date').text(treatList[indexTreat].date);
+      $('#eht_time').text(treatList[indexTreat].time);
+      $('#ep_id').text(treatList[indexTreat].pid);
+      $('#ed_name').text(sessionStorage.firstname+" "+sessionStorage.lastname);
+      $('#ed_id').text(treatList[indexTreat].did);
+
+      showMoreDesc();
+    }))
+
+    $('#showall').click(function(){
+      $("table tbody tr").each(function(index) {
+        $(this).show()
+      })
+    })
+    $('#confirm_button').click(function(){
+      var prssr = $('#ep_bp').val().split(" ");
+      // alert($('#ep_symtom').val().length+" : "+$('#ep_symtom').val())
+      $.post("http://139.59.234.220:5050/api/v1/edithealthrecord",
+      {
+          appointment_id : treatList[indexTreat].apptid,
+          weight : (($('#ep_weight').val().length) ? $('#ep_weight').val() : 0),
+          height : (($('#ep_height').val().length) ? $('#ep_height').val() : 0),
+          temp : (($('#ep_temp').val().length&&$('#ep_temp').val()!="null") ? $('#ep_temp').val() : 0),
+          pulse : (($('#ep_hrate').val().length) ? $('#ep_hrate').val() : 0),
+          bp_sys : ((prssr[0]!=null&&prssr[0]!="null") ? prssr[0] : 0),
+          bp_dia : ((prssr[1]!=null&&prssr[1]!="null") ? prssr[1] : 0),
+          icd10 : (($('#ep_icd10').val().length) ? $('#ep_icd10').val() : "-"),
+          // symtom : (($('#ep_symtom').val().length&&$('#ep_icd10').val()!="null") ? $('#ep_symtom').val() : "-"),
+          diagnose : (($('#ep_diag').val().length&&$('#ep_icd10').val()!="null") ? $('#ep_diag').val() : "-")
+      })
+      .done(function(data,status){
+        alert("Status: "+status);
+        postHR();
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      })
+    })
+
+    $('#addbutton').click(function(){
+      $.post("http://139.59.234.220:5050/api/v1/addhealthrecord",
+      {
+          appointment_id : $('#appidinput').val()
+      })
+      .done(function(adata,astatus){
+        $.post("http://139.59.234.220:5050/api/v1/gethrbyapptid",
+        {
+            appointment_id : $('#appidinput').val()
+        })
+        .done(function(data,status){
+          alert("Status: "+status);
+          addTreat({hrid:data[i].id,date:data[i].date,time:data[i].time,
+            symtom:data[i].syntom,weight:data[i].weight,
+            height:data[i].height,temp:data[i].temp,pulse:data[i].pulse,
+            pressure:(data[i].bp_sys+" "+data[i].bp_dia),diagnose:data[i].diagnose,icd10:data[i].icd10,
+            nurse_id:data[i].nurse_id,diagnose:data[i].diagnose,pid:data[i].patient_id,
+            apptid:data[i].appointment_id,did:data[i].doctor_id})
+        })
+        .fail(function(xhr,status,error){
+          alert(status+": "+xhr.statusText)
+        })
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      })
+    })
+
+    $('#confirmDisp').click(function(){
+      var druglst = [];
+      // alert("before each")
+      $('div[name="addform"]').each(function(){
+        var drugid = $(this).find('input[name="dgid"]').val();
+        var amnt = $(this).find('input[name="ninput"]').val();
+        if(drugid.length&&amnt.length){
+          druglst.push({drug_id:drugid,amount:amnt})
+        }
+      })
+      $.post("http://139.59.234.220:5050/api/v1/adddispensation",
+      {
+          hr_id : treatList[indexTreat].hrid,
+          druglist : druglst
+      })
+      .done(function(data,status){
+        alert("Status: " + status);
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      })
+    })
+  })
+  </script>
 </body>
