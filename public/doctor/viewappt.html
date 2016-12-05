@@ -117,9 +117,10 @@
 
           //alert(did + " " + st + " " +e + " " + document.getElementById("time").value);
           var markers = {'doctor_id': did,'start':st,'end':e};
+          //alert(markers);
           $.ajax({
               type: "POST",
-              url: "http://139.59.234.220:5050/api/v1/getdoctorattplist",
+              url: "http://139.59.234.220:5050/api/v1/getapptlist",
               data: JSON.stringify(markers ),
               contentType: "application/json; charset=utf-8",
               dataType: "json",
