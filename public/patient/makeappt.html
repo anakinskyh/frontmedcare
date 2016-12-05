@@ -172,7 +172,7 @@
               dataType: "json",
               async: false,
               timeout: 2000,
-              success: function(data){ alert(data);
+              success: function(data){ //alert(data);
                   var availlist = document.getElementById("availableappointment");
                   availlist.length=0;
                   for (i=0;i<data.length;i++) {
@@ -206,7 +206,7 @@
           var st,e;
           var e = document.getElementById("dname");
           var did = e.options[e.selectedIndex].getAttribute("doctor_id");
-          alert(markers);
+          //alert(markers);
           var markers = {'patient_id': pid,'syntom': s,'date':date,'doctor_id':did,'time':document.getElementById("time").value};
           //alert(did);
           $.ajax({
