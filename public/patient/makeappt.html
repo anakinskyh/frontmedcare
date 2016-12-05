@@ -43,16 +43,16 @@
                             <label>แผนกและแพทย์ที่ต้องการพบ</label>
                             <select class="form-control"id="dept" onchange="getDocName()">
                                 <option class="disabled"> --รายชื่อแผนก--</option>
-                                <option value="อายุรกรรม"> อายุรกรรม</option>
-                                <option value="ศัลยกรรม"> ศัลยกรรม</option>
-                                <option value="สูติ"> สูติ</option>
-                                <option value="จักษุ"> จักษุ</option>
-                                <option value="โรคผิวหนัง"> โรคผิวหนัง</option>
-                                <option value="อวัยวะปัสสาวะ"> อวัยวะปัสสาวะ</option>
-                                <option value="หัวใจ"> หัวใจ</option>
-                                <option value="หู คอ จมูก"> หู คอ จมูก</option>
-                                <option value="รังสี"> รังสี</option>
-                                <option value="รักษาโรคในช่องปากและฟัน"> รักษาโรคในช่องปากและฟัน</option>
+                                <option deptid='1' value="อายุรกรรม"> อายุรกรรม</option>
+                                <option deptid='2' value="ศัลยกรรม"> ศัลยกรรม</option>
+                                <option deptid='3' value="สูติ"> สูติ</option>
+                                <option deptid='4' value="จักษุ"> จักษุ</option>
+                                <option deptid='5' value="โรคผิวหนัง"> โรคผิวหนัง</option>
+                                <option deptid='6' value="อวัยวะปัสสาวะ"> อวัยวะปัสสาวะ</option>
+                                <option deptid='7' value="หัวใจ"> หัวใจ</option>
+                                <option deptid='8' value="หู คอ จมูก"> หู คอ จมูก</option>
+                                <option deptid='9' value="รังสี"> รังสี</option>
+                                <option deptid='10' value="รักษาโรคในช่องปากและฟัน"> รักษาโรคในช่องปากและฟัน</option>
                             </select>
                         </li>
                         <li class="form-group">
@@ -153,7 +153,17 @@
           var e = enddate.getFullYear()+"-"+emonth+"-"+enddate.getDate();
           var t = document.getElementById("ctime").value;
           alert(dept+" "+ doctid +" "+st+" "+e+" "+t);
-          var markers = {'department_id': dept,'doctor_id': doctid,'start':st,'end':e,'time':t};
+          if(t !='เช้าและบ่าย')
+          var markers = {'doctor_id': doctid,'start':st,'end':e,'time':t};
+          else var markers = {'doctor_id': doctid,'start':st,'end':e};
+
+          if(doctid==null){
+            delete markers['doctor_id'];
+            markers['department_id']=document.getElementById('dept').options[document.getElementById('dept').selectedIndex].getAttribute('deptid');
+            
+          }
+            
+
           $.ajax({
               type: "POST",
               url: "http://139.59.234.220:5050/api/v1/getavailabletime",
@@ -169,15 +179,15 @@
                       var option = document.createElement("option");
                       option.text = data[i].date + " " + data[i].time;
                       option.value = data[i].date + data[i].time;
-                      option.setAttribute('doctor_id',data[i].id);
-                      option.setAttribute('doctor_name',data[i].firstname+" "+data[i].lastname);
+                      option.setAttribute('doctor_id',data[i].doctor_id);
+                      option.setAttribute('doctor_name',data[i].doctor_firstname+" "+data[i].doctor_lastname);
                       option.setAttribute('date',data[i].date);
                       option.setAttribute('time',data[i].time);
                       availlist.appendChild(option);
                   }
                   document.getElementById("date").innerHTML = data[0].date;
                   document.getElementById("time").innerHTML = data[0].time;
-                  document.getElementById("doctname").innerHTML = data[0].firstname+" "+data[0].lastname;
+                  document.getElementById("doctname").innerHTML = data[0].doctor_firstname+" "+data[0].doctor_lastname;
                   document.getElementById("sdetail").innerHTML = document.getElementById("detail").value;
               },
               failure: function(errMsg) {
@@ -191,12 +201,12 @@
       function myFunction2() {
           var name = document.getElementById("doctname").innerHTML;
           var pid = sessionStorage.id;
-          var s = document.getElementById("detail").value;
-          var date = document.getElementById("cdate").innerHTML;
+          var s = document.getElementById("sdetail").value;
+          var date = document.getElementById("date").innerHTML;
           var st,e;
           var e = document.getElementById("dname");
           var did = e.options[e.selectedIndex].getAttribute("doctor_id");
-
+          alert(markers);
           var markers = {'patient_id': pid,'syntom': s,'date':date,'doctor_id':did,'time':document.getElementById("time").value};
           //alert(did);
           $.ajax({
@@ -239,8 +249,8 @@
           var pid = sessionStorage.id;
           var symptom = document.getElementById("detail").value;
           var choosendate = capm.options[capm.selectedIndex].value;
-          var date = choosendate.substring(0,11);
-          var  time = choosendate.substring(11,choosendate.length);
+          var date = choosendate.substring(0,10);
+          var  time = choosendate.substring(10,choosendate.length);
           //sessionStorage.firstname||lastname||id||role ไว้ใช้เรียกค่าที่าเก็บไว้ตอนlogin
 
           var markers = {'patient_id': pid,'syntom': symptom,'date':date,'time':time,'doctor_id':docid};
