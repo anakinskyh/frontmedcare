@@ -86,20 +86,20 @@
 
         </div>
         <!-- /#page-wrapper -->
-         <script type="text/javascript"> 
+         <script type="text/javascript">
         var markers = {};
 
         $.ajax({
             type: "POST",
-            url: "http://139.59.234.220:5050/api/v1/getdepartment",
+            url: "http://127.0.0.1:5050/api/v1/getdepartment",
             // The key needs to match your method's input parameter (case-sensitive).
-            
+
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async:false,
             timeout: 2000,
             success: function(data){//alert(data);
-                //alert(data[0].name);  
+                //alert(data[0].name);
                 var select = document.getElementById('departmentSelect');
                 for(i=0;i<data.length;i++){
 
@@ -129,32 +129,32 @@
               markers = {"email":email,"password":password,"firstname":firstname,"lastname":lastname,"tel":phonenumber,"role":role,"department_id":department};
                         $.ajax({
                             type: "POST",
-                            url: "http://139.59.234.220:5050/api/v1/confirmadduser",
+                            url: "http://127.0.0.1:5050/api/v1/confirmadduser",
                             // The key needs to match your method's input parameter (case-sensitive).
                             data: JSON.stringify(markers),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             async:false,
                             success: function(data){//alert(data);
-                               //  alert(data[0].name);  
+                               //  alert(data[0].name);
                                 if(data.status!="done"){
 
                                   alert("กรุณากรอกข้อมูลที่ถูกต้อง");
-                                  
+
                                 }
                                   else {
                                     alert("เพิ่มบุคลากรเรียบร้อยแล้ว");
-                                    
+
                                   }
-                      
+
                             },
                             failure: function(errMsg) {
                             alert(errMsg);
                     }
                 });
-          
 
-          
+
+
         }
 
     </script>

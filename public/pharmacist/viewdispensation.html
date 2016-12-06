@@ -218,7 +218,7 @@
 
     showTable();
 
-    $.post("http://139.59.234.220:5050/api/v1/getdispensationlist",
+    $.post("http://127.0.0.1:5050/api/v1/getdispensationlist",
     {
     })
     .done(function(data,status){
@@ -257,7 +257,7 @@
       var idx = $(this).index();
       dispIndex2 = idx;
       dispIndex = dispIndex2;
-      $.post("http://139.59.234.220:5050/api/v1/getdispensation",
+      $.post("http://127.0.0.1:5050/api/v1/getdispensation",
       {
           dispensation_id : dispList2[idx].disp_id
       })
@@ -301,7 +301,7 @@
       var idx = $(this).index();
       dispIndex1 = idx;
       dispIndex = dispIndex1;
-      $.post("http://139.59.234.220:5050/api/v1/getdispensation",
+      $.post("http://127.0.0.1:5050/api/v1/getdispensation",
       {
           dispensation_id : dispList1[idx].disp_id
       })
@@ -392,7 +392,7 @@
     })
 
     $('#dispenseBtn').click(function(){
-      $.post("http://139.59.234.220:5050/api/v1/dispense",
+      $.post("http://127.0.0.1:5050/api/v1/dispense",
       {
           dispensation_id : $('#dispid').text(),
           phar_id : sessionStorage.id

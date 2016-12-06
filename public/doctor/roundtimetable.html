@@ -142,7 +142,7 @@
       var date = $(this).find('input').val();
       var time = $(this).find('select :selected').text()
       if(date.length){
-        $.post("http://139.59.234.220:5050/api/v1/addroundtime",
+        $.post("http://127.0.0.1:5050/api/v1/addroundtime",
         {
             doctor_id : sessionStorage.id,
             date : date,
@@ -161,7 +161,7 @@
   }
 
   $(function(){
-    $.post("http://139.59.234.220:5050/api/v1/getavailabletime",
+    $.post("http://127.0.0.1:5050/api/v1/getavailabletime",
     {
         doctor_id : sessionStorage.id
     })
@@ -178,7 +178,7 @@
       var ix = $(this).closest('tr').index();
       var row = $(this).parent().parent();
       // alert(ix)
-      $.post("http://139.59.234.220:5050/api/v1/cancelroundtime",
+      $.post("http://127.0.0.1:5050/api/v1/cancelroundtime",
       {
           doctor_id : sessionStorage.id,
           date : roundList[ix].date,

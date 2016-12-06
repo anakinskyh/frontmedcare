@@ -177,7 +177,7 @@
       <script>
       $(function(){
         $('#editProfileDiv').hide();
-          $.post("http://139.59.234.220:5050/api/v1/getpatientinfo",
+          $.post("http://127.0.0.1:5050/api/v1/getpatientinfo",
           {
               patient_id : sessionStorage.id
           },
@@ -225,7 +225,7 @@
           })
 
           $('#confirmButton').click(function(){
-            $.post("http://139.59.234.220:5050/api/v1/editpatientinfo",
+            $.post("http://127.0.0.1:5050/api/v1/editpatientinfo",
             {
                 patient_id : sessionStorage.id,
                 firstname : $('#p-fname').val(),

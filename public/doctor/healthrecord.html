@@ -238,7 +238,7 @@
               </tr>
               <tr>
                 <th>อาการ</th>
-                <td colspan="3"><textarea class="form-control" id="ep_symtom" rows="3"></textarea></td>
+                <td colspan="3" id="ep_symtom"></td>
               </tr>
               <tr>
                 <th>ผลการวินิจฉัย</th>
@@ -362,7 +362,7 @@
     }
 
     function postHR(){
-      $.post("http://139.59.234.220:5050/api/v1/getpatientinfo",
+      $.post("http://127.0.0.1:5050/api/v1/getpatientinfo",
       {
         patient_id : treatList[indexTreat].pid
       })
@@ -375,7 +375,7 @@
       })
       .fail(function(xhr,status,error){
       })
-      $.post("http://139.59.234.220:5050/api/v1/gethrbyid",
+      $.post("http://127.0.0.1:5050/api/v1/gethrbyid",
       {
         hr_id : treatList[indexTreat].hrid
       })
@@ -385,7 +385,6 @@
         treatList[indexTreat].pulse = data[0].pulse;
         treatList[indexTreat].temp = data[0].temp;
         treatList[indexTreat].pressure = (data[0].bp_sys+" "+data[0].bp_dia);
-        treatList[indexTreat].symtom = data[0].syntom;
         treatList[indexTreat].icd10 = data[0].diagnose;
         treatList[indexTreat].diagnose = data[0].icd10;
 
@@ -394,7 +393,7 @@
         $('#p_hrate').text(data[0].pulse);
         $('#p_temp').text(data[0].temp);
         $('#p_bp').text(data[0].bp_sys+" "+data[0].bp_dia);
-        $('#p_symtom').text(data[0].syntom);
+        $('#p_symtom').text(treatList[indexTreat].symtom);
         $('#p_icd10').text(data[0].icd10);
         $('#p_diag').text(data[0].diagnose);
 
@@ -403,7 +402,7 @@
         $('#ep_hrate').val(data[0].pulse);
         $('#ep_temp').val(data[0].temp);
         $('#ep_bp').val(data[0].bp_sys+" "+data[0].bp_dia);
-        $('#ep_symtom').val(data[0].syntom);
+        $('#ep_symtom').text(treatList[indexTreat].symtom);
         $('#ep_icd10').val(data[0].icd10);
         $('#ep_diag').val(data[0].diagnose);
 
@@ -421,7 +420,7 @@
 
     showHRTable();
 
-    $.post("http://139.59.234.220:5050/api/v1/gethrlistbydoctorid",
+    $.post("http://127.0.0.1:5050/api/v1/gethrlistbydoctorid",
     {
         doctor_id : sessionStorage.id,
         start : "2016-11-01",
@@ -486,7 +485,6 @@
       $('#ed_name').text(sessionStorage.firstname+" "+sessionStorage.lastname);
       $('#ed_id').text(treatList[indexTreat].did);
 
-      showMoreDesc();
     }))
 
     $('#showall').click(function(){
@@ -497,7 +495,7 @@
     $('#confirm_button').click(function(){
       var prssr = $('#ep_bp').val().split(" ");
       // alert($('#ep_symtom').val().length+" : "+$('#ep_symtom').val())
-      $.post("http://139.59.234.220:5050/api/v1/edithealthrecord",
+      $.post("http://127.0.0.1:5050/api/v1/edithealthrecord",
       {
           appointment_id : treatList[indexTreat].apptid,
           weight : (($('#ep_weight').val().length) ? $('#ep_weight').val() : 0),
@@ -520,12 +518,12 @@
     })
 
     $('#addbutton').click(function(){
-      $.post("http://139.59.234.220:5050/api/v1/addhealthrecord",
+      $.post("http://127.0.0.1:5050/api/v1/addhealthrecord",
       {
           appointment_id : $('#appidinput').val()
       })
       .done(function(adata,astatus){
-        $.post("http://139.59.234.220:5050/api/v1/gethrbyapptid",
+        $.post("http://127.0.0.1:5050/api/v1/gethrbyapptid",
         {
             appointment_id : $('#appidinput').val()
         })
@@ -557,7 +555,7 @@
           druglst.push({drug_id:drugid,amount:amnt})
         }
       })
-      $.post("http://139.59.234.220:5050/api/v1/adddispensation",
+      $.post("http://127.0.0.1:5050/api/v1/adddispensation",
       {
           hr_id : treatList[indexTreat].hrid,
           druglist : druglst

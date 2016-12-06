@@ -74,7 +74,7 @@
             var markers = {'patient_id': pid,'start':st,'end':e};
             $.ajax({
                 type: "POST",
-                url: "http://139.59.234.220:5050/api/v1/getpatientattplist",
+                url: "http://127.0.0.1:5050/api/v1/getpatientattplist",
                 data: JSON.stringify(markers ),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

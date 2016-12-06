@@ -158,7 +158,7 @@
     var trsLength;
     var currentIndex;
 
-    $.post("http://139.59.234.220:5050/api/v1/getdispensationlist",
+    $.post("http://127.0.0.1:5050/api/v1/getdispensationlist",
     {
         patient_id : sessionStorage.id
     })
@@ -185,7 +185,7 @@
     $(".clickable-row").on('click','tr',(function(event){
       var idx = $(this).index();
       dispIndex = idx;
-      $.post("http://139.59.234.220:5050/api/v1/getdispensation",
+      $.post("http://127.0.0.1:5050/api/v1/getdispensation",
       {
           dispensation_id : dispList[idx].disp_id
       })
@@ -229,7 +229,7 @@
         currentIndex+=10;
       }
     })
-    $.post("http://139.59.234.220:5050/api/v1/gethrlistbydoctorid",
+    $.post("http://127.0.0.1:5050/api/v1/gethrlistbydoctorid",
     {
     })
     .done(function(data,status){

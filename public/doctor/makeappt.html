@@ -177,13 +177,13 @@
           if(doctid==null){
             delete markers['doctor_id'];
             markers['department_id']=document.getElementById('dept').options[document.getElementById('dept').selectedIndex].getAttribute('deptid');
-            
+
           }
-            
+
 
           $.ajax({
               type: "POST",
-              url: "http://139.59.234.220:5050/api/v1/getavailabletime",
+              url: "http://127.0.0.1:5050/api/v1/getavailabletime",
               data: JSON.stringify(markers ),
               contentType: "application/json; charset=utf-8",
               dataType: "json",
@@ -231,7 +231,7 @@
           var markers = {'patient_id': pid,'syntom': s,'start':st,'end':e,'name':name};
           $.ajax({
               type: "POST",
-                  url: "http://139.59.234.220:5050/api/v1/confirmappt",
+                  url: "http://127.0.0.1:5050/api/v1/confirmappt",
                   data: JSON.stringify(markers ),
                   contentType: "application/json; charset=utf-8",
                   dataType: "json",
@@ -260,7 +260,7 @@
           var markers = {'patient_id': pid,'syntom': symptom,'date':date,'time':time,'doctor_id':docid};
           $.ajax({
               type: "POST",
-              url: "http://139.59.234.220:5050/api/v1/confirmappt",
+              url: "http://127.0.0.1:5050/api/v1/confirmappt",
               data: JSON.stringify(markers ),
               contentType: "application/json; charset=utf-8",
               dataType: "json",
@@ -298,7 +298,7 @@
           var list;
           $.ajax({
               type: "POST",
-              url: "http://139.59.234.220:5050/api/v1/getdoctorname",
+              url: "http://127.0.0.1:5050/api/v1/getdoctorname",
               data: JSON.stringify(markers ),
               contentType: "application/json; charset=utf-8",
               dataType: "json",
