@@ -4,6 +4,7 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
 </script>
+<link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 <body>
   <div class="header"></div>
@@ -21,10 +22,399 @@
 
         <div class="container-fluid">
 
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        รายการการสั่งยา
+                    </h1>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div class="row" id="searchbar">
+              <form class="form-inline">
+                <div class="col-lg-3 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                        ID ผู้ป่วย
+                        <input class="form-control" id="pidsearch"></input>
+                      </li>
+                  </ol>
+                </div>
+                <div class="col-lg-3 form-group">
+                  <ol class="breadcrumb">
+                      <li class="form-inline">
+                        ID การนัดหมาย
+                        <input class="form-control" id="aidsearch"></input>
+                      </li>
+                  </ol>
+                </div>
+                <div class="col-lg-12">
+                    <button class="btn btn-sm btn-default" type="button" id="searchBtn"><i class="fa fa-fw fa-search"></i> ค้นหา</button>
+                    <button class="btn btn-sm btn-info" type="button" id="showall"><i class="fa fa-fw fa-list"></i> แสดงทั้งหมด</button>
+                </div>
+              </form>
+            </div>
+            <br>
+
+            <ul class="nav nav-tabs">
+              <li class="active"><a data-toggle="tab" href="#historydisp">รายการยาที่จ่ายแล้ว</a></li>
+              <li><a data-toggle="tab" href="#waitingdisp">รายการยาที่ยังไม่ได้จ่าย</a></li>
+            </ul>
+
+            <div class="tab-content">
+              <div id="historydisp" class="tab-pane fade in active table-responsive">
+                  <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>วันที่</th>
+                            <th>เวลา</th>
+                            <th>ชื่อแพทย์</th>
+                        </tr>
+                    </thead>
+                    <tbody class="clickable-row" id="disp1">
+                    </tbody>
+                  </table>
+                  <div class="col-md-12">
+                    <div class="col-md-5">
+                    </div>
+                    <div class="col-md-1">
+                      <button class="btn btn-sm btn-default see-more-btn" type="button" id="seeMoreBtn1">ดูเพิ่มเติม</button>
+                    </div>
+                  </div>
+              </div>
+              <div id="waitingdisp" class="tab-pane fade table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                  <thead>
+                      <tr>
+                          <th>วันที่</th>
+                          <th>เวลา</th>
+                          <th>ชื่อแพทย์</th>
+                      </tr>
+                  </thead>
+                  <tbody class="clickable-row" id="disp2">
+                  </tbody>
+                </table>
+                <div class="col-md-12">
+                  <div class="col-md-5">
+                  </div>
+                  <div class="col-md-1">
+                    <button class="btn btn-sm btn-default see-more-btn" type="button" id="seeMoreBtn2">ดูเพิ่มเติม</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="moredescbtnbar" class="row">
+              <div class="col-lg-12">
+                <a role="button" class="btn btn-sm btn-primary" id="dispenseBtn"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> จ่ายยา</a>
+                <a role="button" class="btn btn-sm btn-default" onclick="showTable()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> กลับ</a>
+              </div>
+            </div>
+            <br>
+            <div id="moredesctable" class="row">
+              <!-- left column -->
+              <div class="col-lg-12 table-responsive">
+                <table class="table table-bordered">
+                  <tr>
+                    <th>Dispensation ID</th>
+                    <td id="dispid"></td>
+                    <th>ประเภท</th>
+                    <td>นัดหมายล่วงหน้า</td>
+                  </tr>
+                  <tr>
+                    <th>วันที่</th>
+                    <td id="tdate"></td>
+                    <th>เวลา</th>
+                    <td id="ttime"></td>
+                  </tr>
+                  <tr>
+                    <th>ชื่อผู้ป่วย</th>
+                    <td id="pname"></td>
+                    <th>Patient ID</th>
+                    <td id="pid"></td>
+                  </tr>
+                  <tr>
+                    <th>ชื่อแพทย์</th>
+                    <td id="dname"></td>
+                    <th>Doctor ID</th>
+                    <td id="did"></td>
+                  </tr>
+                  <tr>
+                    <th colspan="4">รายการยา</th>
+                  </tr>
+                  <tr>
+                    <th>ชื่อยา</th>
+                    <td colspan="3" id="drugname"></td>
+                  </tr>
+                  <tr>
+                    <th>วิธีใช้</th>
+                    <td id="dadmin"></td>
+                    <th>จำนวน</th>
+                    <td id="damount"></td>
+                  </tr>
+                  <tr id="lastrow">
+                    <th>เพิ่มเติม</th>
+                    <td colspan="3" id="tdesc"></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
         </div>
         <!-- /.container-fluid -->
 
     </div>
     <!-- /#page-wrapper -->
   </div>
+  <script>
+  var dispList1 = [];
+  var dispList2 = [];
+  var dispIndex1,dispIndex2,dispIndex;
+
+  function appndDisp(){
+    for(i=0;i<dispList1.length;i++)
+      $("#disp1").append("<tr>"
+                          +"<td>"+dispList1[i].date+"</td>"
+                          +"<td>"+dispList1[i].time+"</td>"
+                          +"<td>"+dispList1[i].dfname+" "+dispList1[i].dlname+"</td></tr>");
+
+    for(i=0;i<dispList2.length;i++)
+      $("#disp2").append("<tr>"
+                          +"<td>"+dispList2[i].date+"</td>"
+                          +"<td>"+dispList2[i].time+"</td>"
+                          +"<td>"+dispList2[i].dfname+" "+dispList2[i].dlname+"</td></tr>");
+  }
+
+  function addDisp1(treat){
+    dispList1.push(treat);
+  }
+
+  function addDisp2(treat){
+    dispList2.push(treat);
+  }
+
+  function sortDisp(){
+    dispList1.sort(function(a,b){
+      return new Date(b.date)-new Date(a.date);
+    });
+    dispList2.sort(function(a,b){
+      return new Date(b.date)-new Date(a.date);
+    });
+  }
+
+  function showTable(){
+    $('#searchbar').show();
+    $('.nav-tabs').show();
+    $('.tab-content').show();
+    $('#moredescbtnbar').hide();
+    $('#moredesctable').hide();
+  }
+
+  $(function(){
+    var trs1,trs2
+    var trsLength1,trsLength2;
+    var currentIndex1,currentIndex2;
+
+    showTable();
+
+    $.post("http://139.59.234.220:5050/api/v1/getdispensationlist",
+    {
+    })
+    .done(function(data,status){
+      for(i=0;i<data.length;i++){
+        if(data[i].phar_id!=null&&data[i].phar_id!="null")
+          addDisp1({disp_id:data[i].id,hr_id:data[i].hr_id,phar_id:data[i].phar_id,
+            date:data[i].date,time:data[i].time,doctor_id:data[i].doctor_id,
+            dfname:data[i].doctor_firstname,dlname:data[i].doctor_lastname,patient_id:data[i].patient_id,
+            appt_id:data[i].appointment_id})
+        else
+          addDisp2({disp_id:data[i].id,hr_id:data[i].hr_id,phar_id:data[i].phar_id,
+            date:data[i].date,time:data[i].time,doctor_id:data[i].doctor_id,
+            dfname:data[i].doctor_firstname,dlname:data[i].doctor_lastname,patient_id:data[i].patient_id,
+            appt_id:data[i].appointment_id})
+      }
+      sortDisp();
+      appndDisp();
+
+      trs1 = $("#disp1 tr");
+      trsLength1 = trs1.length;
+      currentIndex1 = (trsLength1>=10)?10:trsLength1;
+      trs1.hide();
+      trs1.slice(0, 10).show();
+
+      trs2 = $("#disp2 tr");
+      trsLength2 = trs2.length;
+      currentIndex2 = (trsLength2>=10)?10:trsLength2;
+      trs2.hide();
+      trs2.slice(0, 10).show();
+    })
+    .fail(function(xhr,status,error){
+      alert(status+": "+xhr.statusText)
+    });
+
+    $("#disp2").on('click','tr',(function(event){
+      var idx = $(this).index();
+      dispIndex2 = idx;
+      dispIndex = dispIndex2;
+      $.post("http://139.59.234.220:5050/api/v1/getdispensation",
+      {
+          dispensation_id : dispList2[idx].disp_id
+      })
+      .done(function(data,status){
+        var disp = data.dispensation[0];
+        $('#dispid').text(dispList2[idx].disp_id);
+        $('#tdate').text(disp.date);
+        $('#ttime').text(disp.time);
+        $('#pname').text(disp.patient_firstname+" "+disp.patient_lastname);
+        $('#pid').text(disp.patient_id);
+        $('#dname').text(disp.doctor_firstname+" "+disp.doctor_lastname);
+        $('#did').text(disp.doctor_id);
+
+        var dlist=data.drug_list;
+        $('#drugname').text(dlist[0].name);
+        $('#dadmin').text(dlist[0].usage);
+        $('#damount').text(dlist[0].amount);
+        if(dlist[0].sp_usage!=null&&dlist[0].sp_usage!="null") $('#tdesc').text(dlist[0].sp_usage);
+        $(".removeable-row").remove();
+        for(i=1;i<dlist.length;i++){
+          $('#lastrow').after("<tr class=\"removeable-row\"><th>ชื่อยา</th>"+
+                                "<td colspan=\"3\">"+dlist[i].name+"</td></tr>"+
+                              "<tr class=\"removeable-row\"><th>วิธีใช้</th>"+
+                                "<td>"+dlist[i].usage+"</td>"+
+                                "<th>จำนวน</th>"+
+                                "<td>"+dlist[i].amount+"</td></tr>"+
+                              "<tr class=\"removeable-row\"><th>เพิ่มเติม</th>"+
+                                "<td colspan=\"3\">"+((dlist[i].sp_usage!=null&&dlist[i].sp_usage!="null") ? dlist[i].sp_usage : " ")+"</td></tr>");
+        }
+        $('#searchbar').hide();
+        $('.nav-tabs').hide();
+        $('.tab-content').hide();
+        $('#moredescbtnbar').show();
+        $('#moredesctable').show();
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      });
+    }))
+    $("#disp1").on('click','tr',(function(event){
+      var idx = $(this).index();
+      dispIndex1 = idx;
+      dispIndex = dispIndex1;
+      $.post("http://139.59.234.220:5050/api/v1/getdispensation",
+      {
+          dispensation_id : dispList1[idx].disp_id
+      })
+      .done(function(data,status){
+        var disp = data.dispensation[0];
+        $('#dispid').text(dispList1[idx].disp_id);
+        $('#tdate').text(disp.date);
+        $('#ttime').text(disp.time);
+        $('#pname').text(disp.patient_firstname+" "+disp.patient_lastname);
+        $('#pid').text(disp.patient_id);
+        $('#dname').text(disp.doctor_firstname+" "+disp.doctor_lastname);
+        $('#did').text(disp.doctor_id);
+
+        var dlist=data.drug_list;
+        $('#drugname').text(dlist[0].name);
+        $('#dadmin').text(dlist[0].usage);
+        $('#damount').text(dlist[0].amount);
+        if(dlist[0].sp_usage!=null&&dlist[0].sp_usage!="null") $('#tdesc').text(dlist[0].sp_usage);
+        $(".removeable-row").remove();
+        for(i=1;i<dlist.length;i++){
+          $('#lastrow').after("<tr class=\"removeable-row\"><th>ชื่อยา</th>"+
+                                "<td colspan=\"3\">"+dlist[i].name+"</td></tr>"+
+                              "<tr class=\"removeable-row\"><th>วิธีใช้</th>"+
+                                "<td>"+dlist[i].usage+"</td>"+
+                                "<th>จำนวน</th>"+
+                                "<td>"+dlist[i].amount+"</td></tr>"+
+                              "<tr class=\"removeable-row\"><th>เพิ่มเติม</th>"+
+                                "<td colspan=\"3\">"+((dlist[i].sp_usage!=null&&dlist[i].sp_usage!="null") ? dlist[i].sp_usage : " ")+"</td></tr>");
+        }
+        $('#searchbar').hide();
+        $('.nav-tabs').hide();
+        $('.tab-content').hide();
+        $('#moredescbtnbar').show();
+        $('#moredesctable').show();
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      });
+    }))
+
+    $("#seeMoreBtn1").click(function(e){
+      e.preventDefault();
+      if(currentIndex1<trsLength1){
+      trs1.slice(currentIndex1,currentIndex1+10).show();
+        currentIndex1+=10;
+      }
+    })
+    $("#seeMoreBtn2").click(function(e){
+      e.preventDefault();
+      if(currentIndex2<trsLength2){
+      trs1.slice(currentIndex2,currentIndex2+10).show();
+        currentIndex2+=10;
+      }
+    })
+
+    $('#searchBtn').click(function(){
+      var pidinput = $('#pidsearch').val()
+      var aidinput = $('#aidsearch').val()
+      //alert("|"+nameinput+"|"+dateinput+"|"+timeinput+"|")
+      $("#disp1 tr").each(function(index) {
+            $row = $(this)
+
+            //alert(c1+"|"+c2+"|"+c3)
+
+            if ((""+dispList1[index].patient_id).indexOf(pidinput) !==0 || (""+dispList1[index].appt_id).indexOf(aidinput) !==0) {
+                $row.hide()
+            }
+            else {
+                $row.show()
+            }
+      })
+      $("#disp2 tr").each(function(index) {
+            $row = $(this)
+
+            if ((""+dispList2[index].patient_id).indexOf(pidinput) !==0 || (""+dispList2[index].appt_id).indexOf(aidinput) !==0) {
+                $row.hide()
+            }
+            else {
+                $row.show()
+            }
+      })
+    })
+
+    $('#showall').click(function(){
+      $(".clickable-row tr").each(function(index) {
+        $(this).show()
+      })
+    })
+
+    $('#dispenseBtn').click(function(){
+      $.post("http://139.59.234.220:5050/api/v1/dispense",
+      {
+          dispensation_id : $('#dispid').text(),
+          phar_id : sessionStorage.id
+      })
+      .done(function(data,status){
+        alert(status)
+        window.location="/pharmacist/viewdispensation"
+      })
+      .fail(function(xhr,status,error){
+        alert(status+": "+xhr.statusText)
+      });
+    })
+
+  })
+  function logout(){
+      sessionStorage.id="";
+      sessionStorage.firstname="";
+      sessionStorage.lastname="";
+      sessionStorage.role="";
+      window.location ="http://localhost";
+  }
+  document.getElementById("user_name").innerHTML = " " + sessionStorage.firstname + " " + sessionStorage.lastname;
+  </script>
 </body>
+</html>
